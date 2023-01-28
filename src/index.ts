@@ -1,4 +1,4 @@
-import { redirect, type Handle } from '@sveltejs/kit'
+import { redirect, type RequestEvent, type Handle } from '@sveltejs/kit'
 
 type Route = {
 	pathname: string
@@ -13,6 +13,7 @@ type RouteGuardOptions = {
 	routes?: Route[]
 	beforeEach?: (
 		to: Route,
+		event: RequestEvent,
 		next: (path?: string) => void
 	) => void | Promise<void>
 }
@@ -20,7 +21,7 @@ type RouteGuardOptions = {
 export const createRouteGuard = ({
 	redirect,
 	routes = [],
-	beforeEach = (_to, next) => next(),
+	beforeEach = (_to, _event, next) => next(),
 	next = async (input) => {
 		return input.resolve(input.event)
 	},
@@ -31,7 +32,7 @@ export const createRouteGuard = ({
 				return route.pathname === input.event.url.pathname
 			})
 			if (!route) return resolve(next(input))
-			beforeEach(route, (path) => {
+			beforeEach(route, input.event, (path) => {
 				if (path) throw redirect(303, path)
 				else return resolve(next(input))
 			})
