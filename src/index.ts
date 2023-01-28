@@ -8,6 +8,7 @@ type Route = {
 }
 
 type RouteGuardOptions = {
+	redirect: typeof redirect
 	next?: Handle
 	routes?: Route[]
 	beforeEach?: (
@@ -17,6 +18,7 @@ type RouteGuardOptions = {
 }
 
 export const createRouteGuard = ({
+	redirect,
 	routes = [],
 	beforeEach = (_to, next) => next(),
 	next = async (input) => {
