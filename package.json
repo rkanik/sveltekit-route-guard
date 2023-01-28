@@ -1,7 +1,9 @@
 {
   "name": "sveltekit-route-guard",
-  "version": "1.0.1",
   "type": "module",
+  "license": "MIT",
+  "version": "1.0.1",
+  "description": "Route guard for sveltekit.",
   "exports": {
     ".": {
       "import": "./dist/index.es.js",
@@ -32,10 +34,25 @@
   "peerDependencies": {
     "@sveltejs/kit": "^1.0.0"
   },
-  "license": "ISC",
   "author": {
     "name": "RK Anik",
     "email": "rkanik.me@gmail.com",
     "url": "https://rkanik-me.web.app"
-  }
+  },
+  "homepage": "https://github.com/rkanik/sveltekit-route-guard",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rkanik/sveltekit-route-guard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rkanik/sveltekit-route-guard/issues"
+  },
+  "keywords": [
+    "svelte",
+    "sveltekit",
+    "sveltekit-routing",
+    "sveltekit-route-guard",
+    "sveltekit-hooks-server",
+    "sveltekit-hooks-handle"
+  ]
 }
