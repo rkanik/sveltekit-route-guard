@@ -1,0 +1,36 @@
+{
+  "name": "sveltekit-route-guard",
+  "version": "1.0.0",
+  "exports": {
+    ".": {
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.cjs.js"
+    }
+  },
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.es.js",
+  "typings": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc && vite build",
+    "build:watch": "tsc && vite build --watch",
+    "dev": "vite"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^9.0.1",
+    "@types/node": "^18.11.0",
+    "prettier": "^2.7.1",
+    "rollup-plugin-typescript-paths": "^1.4.0",
+    "tslib": "^2.4.0",
+    "typescript": "^4.6.4",
+    "vite": "^4.0.4",
+    "@sveltejs/kit": "^1.3.2"
+  },
+  "peerDependencies": {
+    "@sveltejs/kit": "^1.0.0"
+  },
+  "license": "ISC"
+}
