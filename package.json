@@ -2,7 +2,7 @@
   "name": "sveltekit-route-guard",
   "type": "module",
   "license": "MIT",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Route guard for sveltekit.",
   "exports": {
     ".": {
