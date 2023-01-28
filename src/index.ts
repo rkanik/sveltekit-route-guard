@@ -22,11 +22,9 @@ export const createRouteGuard = ({
 	redirect,
 	routes = [],
 	beforeEach = (_to, _event, next) => next(),
-	next = async (input) => {
-		return input.resolve(input.event)
-	},
+	next = ({ event, resolve }) => resolve(event),
 }: RouteGuardOptions): Handle => {
-	return async (input: any) => {
+	return (input) => {
 		return new Promise((resolve) => {
 			const route = routes.find((route) => {
 				return route.pathname === input.event.url.pathname
