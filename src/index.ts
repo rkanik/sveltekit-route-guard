@@ -1,6 +1,6 @@
 import { redirect, type RequestEvent, type Handle } from '@sveltejs/kit'
 
-type Route = {
+export type Route = {
 	pathname: string
 	meta?: {
 		[key: string]: any
@@ -27,7 +27,9 @@ export const createRouteGuard = ({
 	return (input) => {
 		return new Promise((resolve) => {
 			const route = routes.find((route) => {
-				return route.pathname === input.event.url.pathname
+				return new RegExp(
+					route.pathname.replace(/\[[^\]]*]/g, '([\\w-]+)') + '$'
+				).test(input.event.url.pathname)
 			})
 			if (!route) return resolve(next(input))
 			beforeEach(route, input.event, (path) => {
