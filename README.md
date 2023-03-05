@@ -35,29 +35,28 @@ pnpm add sveltekit-route-guard
 > **Note** You don't have to pass all the routes in your `/routes` directory. Just pass the routes you want to add guard. Other routes will be marked as allowed by default.
 
 ```ts
-// src/hook.server.ts
+// src/hooks.server.ts
 import { createRouteGuard } from 'sveltekit-route-guard'
 import { redirect, type Handle } from '@sveltejs/kit'
 export const handle: Handle = createRouteGuard({
- redirect,
- routes: [
-  { pathname: '/protected' },
-  { pathname: '/login' }
- ],
- beforeEach(to, event, next) {
-  if (to.pathname === '/protected') {
-   return next('/login')
+  redirect,
+  routes: [
+    { pathname: '/protected' },
+    { pathname: '/login' }
+  ],
+  beforeEach(to, event, next) {
+    if (to.pathname === '/protected') {
+      return next('/login')
+    }
+    return next()
   }
-  return next()
- }
 })
-
 ```
 
 Using alongside [trpc](https://trpc.io/)[-sveltekit](https://icflorescu.github.io/trpc-sveltekit/):
 
 ```ts
-// src/hook.server.ts
+// src/hooks.server.ts
 import { router } from '$lib/trpc/router'
 import { createTRPCHandle } from 'trpc-sveltekit'
 import { createContext } from '$lib/trpc/context'
@@ -65,31 +64,31 @@ import { createRouteGuard } from 'sveltekit-route-guard'
 import { redirect, type Handle } from '@sveltejs/kit'
 
 const trpcHandle = createTRPCHandle({
- router,
- createContext
+  router,
+  createContext
 })
 
 export const handle: Handle = createRouteGuard({
- redirect,
- next: trpcHandle,
- routes: [
-  { pathname: '/protected' },
-  { pathname: '/login' }
- ],
- beforeEach(to, event, next) {
-  if (to.pathname === '/protected') {
-   return next('/login')
+  redirect,
+  next: trpcHandle,
+  routes: [
+    { pathname: '/protected' },
+    { pathname: '/login' }
+  ],
+  beforeEach(to, event, next) {
+    if (to.pathname === '/protected') {
+      return next('/login')
+    }
+    return next()
   }
-  return next()
- }
 })
 
 ```
 
-Using authentication
+Using authentication:
 
 ```ts
-// src/hook.server.ts
+// src/hooks.server.ts
 import { verify } from 'jsonwebtoken'
 import { JWT_SECRET } from '$env/static/private'
 import { createRouteGuard } from 'sveltekit-route-guard'
@@ -98,47 +97,52 @@ import type { User } from '@prisma/client'
 import type { Handle, RequestEvent } from '@sveltejs/kit'
 
 const getCurrentUser = (event: RequestEvent) => {
- try {
-  const token = event.cookies.get('token')
-  return verify(token || '', JWT_SECRET) as User
- } catch (_) {
-  return null
- }
+  try {
+    const token = event.cookies.get('token')
+    return verify(token || '', JWT_SECRET) as User
+  } catch (_) {
+    return null
+  }
 }
 
 export const handle: Handle = createRouteGuard({
- redirect,
- routes: [
-  {
-   pathname: '/projects',
-   meta: {
-    auth: true
-   }
-  },
-  {
-   pathname: '/login',
-   meta: {
-    auth: false
-   }
-  }
- ],
- beforeEach(to, event, next) {
-  // check if the user is authenticated ot not
-  const user = getCurrentUser(event)
-  if (user) event.locals.user = user
+  redirect,
+  routes: [
+    {
+      pathname: '/projects',
+      redirect: '/projects/dashboard',
+      meta: {
+        auth: true
+      },
+      children: [
+        { pathname: '/dashboard' },
+        { pathname: '/settings' }
+      ]
+    },
+    {
+      pathname: '/login',
+      meta: {
+        auth: false
+      }
+    }
+  ],
+  beforeEach(to, event, next) {
+    // check if the user is authenticated ot not
+    const user = getCurrentUser(event)
+    if (user) event.locals.user = user
 
-  // not authenticated and requires authentication is true
-  if (!user && to.meta?.auth) {
-   return next('/login')
-  }
+    // not authenticated and requires authentication is true
+    if (!user && to.meta?.auth) {
+      return next('/login')
+    }
 
-  // already authenticated, can't go to /login
-  if (user && to.meta?.auth === false) {
-   return next('/')
-  }
+    // already authenticated, can't go to /login
+    if (user && to.meta?.auth === false) {
+      return next('/')
+    }
 
-  // no guard, continue the request
-  return next()
- }
+    // no guard, continue the request
+    return next()
+  }
 })
 ```
